@@ -12,7 +12,9 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class CommentController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;    public function update(Request $request, Post $post, Comment $comment)
+    use AuthorizesRequests, ValidatesRequests;    
+    
+    public function update(Request $request, Post $post, Comment $comment)
     {
         try {
             // Verify the comment belongs to the post
@@ -56,7 +58,9 @@ class CommentController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
-    }    public function destroy(Post $post, Comment $comment)
+    }    
+    
+    public function destroy(Post $post, Comment $comment)
     {
         try {
             // Verify the comment belongs to the post
