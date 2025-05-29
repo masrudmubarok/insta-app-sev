@@ -71,7 +71,9 @@ class PostController extends Controller
         }
 
         return redirect()->route('posts.index');
-    }    public function like(Post $post, Request $request)
+    }    
+    
+    public function like(Post $post, Request $request)
     {
         try {
             $user = $request->user();
