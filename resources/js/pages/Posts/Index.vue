@@ -62,12 +62,40 @@ const newPost = ref({
   caption: '',
   image: null as File | null,
 });
+const imagePreviewUrl = ref<string | null>(null);
 
 const handleImageUpload = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
   if (file) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+
     newPost.value.image = file;
     showImageAlert.value = false;
+    
+    // Create preview URL
+    imagePreviewUrl.value = URL.createObjectURL(file);
+  }
+};
+
+const removeImage = () => {
+  newPost.value.image = null;
+  if (imagePreviewUrl.value) {
+    URL.revokeObjectURL(imagePreviewUrl.value);
+    imagePreviewUrl.value = null;
+  }
+  const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
   }
 };
 
@@ -98,11 +126,15 @@ const submitPost = async (e: Event) => {
     // Add the new post to the beginning of the posts array
     if (response.data) {
       posts.value.unshift(response.data);
-    }
-
-    // Reset the form
+    }    // Reset the form and clear preview
     newPost.value.caption = '';
     newPost.value.image = null;
+    
+    // Clear the preview URL
+    if (imagePreviewUrl.value) {
+      URL.revokeObjectURL(imagePreviewUrl.value);
+      imagePreviewUrl.value = null;
+    }
     
     // Reset the file input
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -385,14 +417,31 @@ const showPost = (postId: number) => {
                 </svg>
                 {{ isSubmitting ? 'Posting...' : 'Post' }}
               </button>
-            </div>
-
-            <!-- Selected Image Name -->
-            <div v-if="newPost.image" class="text-sm text-gray-600 flex items-center space-x-1">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>{{ newPost.image.name }}</span>
+            </div>            <!-- Image Preview Section -->
+            <div v-if="imagePreviewUrl" class="mt-4">
+              <div class="relative">
+                <img 
+                  :src="imagePreviewUrl" 
+                  alt="Preview" 
+                  class="max-h-96 rounded-lg object-contain w-full bg-black"
+                />
+                <button
+                  @click="removeImage"
+                  type="button"
+                  class="absolute top-2 right-2 bg-gray-900 bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-2 transition-all duration-200"
+                  title="Remove image"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div class="mt-2 text-sm text-gray-600 flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <span>{{ newPost.image?.name }}</span>
+              </div>
             </div>
           </div>
         </form>
