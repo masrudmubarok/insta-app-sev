@@ -29,7 +29,7 @@ const submit = () => {
     <AuthBase>
         <Head title="Log in" />
 
-        <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
+        <div v-if="status" class="mb-4 text-center text-sm font-mediums">
             {{ status }}
         </div>
 
@@ -68,7 +68,7 @@ const submit = () => {
 
                 <Button
                     type="submit"
-                    class="mt-2 w-full bg-blue-500 hover:bg-blue-600 rounded-lg py-1.5 text-sm font-semibold"
+                    class="mt-2 w-full rounded-lg py-1.5 text-sm font-semibold gradient-button"
                     :tabindex="3"
                     :disabled="form.processing"
                 >
@@ -89,3 +89,12 @@ const submit = () => {
 
     </AuthBase>
 </template>
+
+<style scoped>
+.gradient-button {
+    background: linear-gradient(to right, #9333ea, #db2777, #ec4899);
+}
+.gradient-button:hover {
+    opacity: 0.9;
+}
+</style>
