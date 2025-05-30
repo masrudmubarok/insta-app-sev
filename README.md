@@ -1,25 +1,101 @@
-# Laravel + Vue Starter Kit
+# Insta App
 
-## Introduction
+A modern Instagram-like social media application built with Laravel, Vue.js, TypeScript, and Inertia.js. This application allows users to share posts, like content, and engage through comments.
 
-Our Vue starter kit provides a robust, modern starting point for building Laravel applications with a Vue frontend using [Inertia](https://inertiajs.com).
+## Features
 
-Inertia allows you to build modern, single-page Vue applications using classic server-side routing and controllers. This lets you enjoy the frontend power of Vue combined with the incredible backend productivity of Laravel and lightning-fast Vite compilation.
+- User authentication and authorization
+- Post creation and sharing
+- Like/unlike functionality
+- Commenting system
+- User profiles
+- Responsive design
+- Real-time updates
 
-This Vue starter kit utilizes Vue 3 and the Composition API, TypeScript, Tailwind, and the [shadcn-vue](https://www.shadcn-vue.com) component library.
+## Tech Stack
 
-## Official Documentation
+- **Backend:** Laravel 12
+- **Frontend:** Vue 3 with TypeScript
+- **UI Framework:** Tailwind CSS with shadcn-vue components
+- **Database:** MySQL 8
+- **Authentication:** Laravel Breeze
+- **API Architecture:** Inertia.js
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+## Prerequisites
+
+- PHP >= 8.1
+- Node.js >= 16.x
+- Composer
+- Git
+- MySQL >= 5.7
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd insta-app-sev
+   ```
+
+2. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
+
+3. Install Node.js dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. Configure your database in `.env`:
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=instaapp_sev
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+6. Create MySQL database:
+   ```bash
+   mysql -u root -e "CREATE DATABASE instaapp-sev CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+   ```
+
+7. Run database migrations and seeders:
+   ```bash
+   php artisan migrate --seed
+   ```
+
+8. Create storage link for public files:
+   ```bash
+   php artisan storage:link
+   ```
+
+## Running the Application
+
+1. Start the development server:
+   ```bash
+   composer run dev
+   ```
+
+The application will be accessible at `http://127.0.0.1:8000`
+
 
 ## Contributing
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The Laravel + Vue starter kit is open-sourced software licensed under the MIT license.
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
