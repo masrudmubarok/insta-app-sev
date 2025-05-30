@@ -10,7 +10,8 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        $user = auth()->user();        $posts = Post::where('user_id', $user->id)
+        $user = auth()->user();        
+        $posts = Post::where('user_id', $user->id)
             ->withCount(['likes', 'comments'])
             ->with(['likes' => function ($query) use ($user) {
                 $query->where('user_id', $user->id);

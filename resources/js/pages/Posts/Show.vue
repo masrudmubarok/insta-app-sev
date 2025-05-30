@@ -4,7 +4,14 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 
 const page = usePage();
-const user = ref(page.props.auth.user);
+interface Auth {
+  user: {
+    id: number;
+    name: string;
+  };
+}
+
+const user = ref((page.props.auth as Auth).user);
 
 interface Like {
   user_id: number;
@@ -41,6 +48,7 @@ const props = defineProps<{
 const post = ref<Post>(props.post);
 const commentForm = ref('');
 const editingComment = ref<{ commentId: number; content: string } | null>(null);
+const isSavingEdit = ref(false);
 
 const isLiked = computed(() => post.value.isLiked);
 
@@ -149,11 +157,13 @@ const updateComment = async (commentId: number, newContent: string) => {
   // Optimistic update
   comment.content = newContent;
 
+  isSavingEdit.value = true;
   try {
     const response = await axios.put(`/posts/${post.value.id}/comments/${commentId}`, {
       content: newContent
     });
-    
+    isSavingEdit.value = false;
+
     if (response.data.comments) {
       post.value.comments = response.data.comments;
     }
@@ -161,6 +171,7 @@ const updateComment = async (commentId: number, newContent: string) => {
     console.error('Error updating comment:', error);
     // Revert to previous state if error occurs
     comment.content = originalContent;
+    isSavingEdit.value = false;
   }
 
   editingComment.value = null;
@@ -250,6 +261,7 @@ const updateComment = async (commentId: number, newContent: string) => {
                   class="h-6 w-6 transition-all duration-200"
                   viewBox="0 0 24 24"
                   fill="currentColor"
+                  stroke="none"
                 >
                   <path
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 10-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
@@ -290,7 +302,8 @@ const updateComment = async (commentId: number, newContent: string) => {
                       />
                       <button
                         @click="updateComment(comment.id, editingComment.content)"
-                        class="text-blue-500 hover:text-blue-600 text-sm"
+                        class="text-purple-500 hover:text-purple-600 text-sm flex items-center space-x-1"
+                        :disabled="isSavingEdit"
                       >
                         Save
                       </button>
@@ -332,11 +345,11 @@ const updateComment = async (commentId: number, newContent: string) => {
                   v-model="commentForm"
                   type="text"
                   placeholder="Add a comment..."
-                  class="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  class="flex-1 border rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
                 <button
                   type="submit"
-                  class="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 disabled:opacity-50"
+                  class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-r-lg hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
                 >
                   Post
                 </button>

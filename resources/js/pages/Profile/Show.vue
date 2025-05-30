@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Layout from '@/Layouts/Layout.vue'
+import Layout from '@/layouts/Layout.vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { useForm } from '@inertiajs/vue3'
 import { TransitionRoot, TransitionChild, Dialog, DialogPanel, DialogTitle } from '@headlessui/vue'
@@ -16,7 +16,8 @@ const props = defineProps<{
   posts: {
     data: Array<{
       id: number;
-      image_path: string;      caption: string;
+      image_path: string;      
+      caption: string;
       created_at: string;
       likes_count: number;
       comments_count: number;

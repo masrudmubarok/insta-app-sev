@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import ProfileDropdown from '@/Components/ProfileDropdown.vue';
+import ProfileDropdown from '@/components/ProfileDropdown.vue';
 
 defineProps<{
   auth?: {
