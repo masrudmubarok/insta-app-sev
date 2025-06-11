@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
     public function show()
     {
-        $user = auth()->user();        
+        $user = Auth::user();
         $posts = Post::where('user_id', $user->id)
             ->withCount(['likes', 'comments'])
             ->with(['likes' => function ($query) use ($user) {
@@ -35,10 +37,9 @@ class ProfileController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . auth()->id()],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
         ]);
-
-        $user = auth()->user();
+        $user = User::findOrFail(Auth::id());
         $user->update($validated);
 
         return back()->with('message', 'Profile updated successfully');

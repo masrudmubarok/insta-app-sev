@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use \Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
@@ -16,8 +19,10 @@ class PostController extends Controller
 
     public function index()
     {
-        $users = User::where('id', '!=', auth()->id())->latest()->get();
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
+        $users = User::when($currentUser, function ($query) use ($currentUser) {
+            return $query->where('id', '!=', $currentUser->id);
+        })->latest()->get();
         $posts = Post::with(['user', 'likes', 'comments.user'])
             ->latest()
             ->get()
@@ -94,7 +99,7 @@ class PostController extends Controller
 
     public function show(Post $post, Request $request)
     {
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
         $post->load(['user', 'likes', 'comments.user']);
         
         $postData = [
@@ -182,7 +187,7 @@ class PostController extends Controller
             $this->authorize('delete', $post);
             
             // Begin transaction to ensure all related data is deleted properly
-            \DB::beginTransaction();
+            DB::beginTransaction();
             
             // Delete associated comments first
             $post->comments()->delete();
@@ -195,7 +200,7 @@ class PostController extends Controller
                 try {
                     Storage::disk('public')->delete($post->image_path);
                 } catch (\Exception $e) {
-                    \Log::error('Error deleting post image: ' . $e->getMessage());
+                    Log::error('Error deleting post image: ' . $e->getMessage());
                     // Continue with post deletion even if image deletion fails
                 }
             }
@@ -203,7 +208,7 @@ class PostController extends Controller
             // Delete the post
             $post->delete();
             
-            \DB::commit();
+            DB::commit();
             
             if (request()->wantsJson()) {
                 return response()->json(['message' => 'Post deleted successfully']);
@@ -211,9 +216,9 @@ class PostController extends Controller
             
             return redirect()->route('posts.index');
         } catch (\Exception $e) {
-            \DB::rollBack();
-            \Log::error('Error deleting post: ' . $e->getMessage());
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            DB::rollBack();
+            Log::error('Error deleting post: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
             
             return response()->json([
                 'error' => 'Failed to delete post',
